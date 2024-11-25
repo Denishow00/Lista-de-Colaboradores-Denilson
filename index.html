@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Trabalhadores</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            background-image: url('https://img.freepik.com/fotos-gratis/linhas-brilhantes-na-forma-3d-do-coracao-humano-em-fundo-escuro-generativo-ai_191095-1435.jpg?semt=ais_hybrid');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 900px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            border: 5px solid black;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: #222;
+        }
+
+        .formulario {
+            margin-bottom: 30px;
+        }
+
+        .formulario label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .formulario input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 2px solid #000;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            box-sizing: border-box;
+        }
+
+        .formulario input:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+
+        .formulario button {
+            background-color: #007bff;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2rem;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .formulario button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            font-size: 1.1rem;
+        }
+
+        table th, table td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+        }
+
+        table th {
+            background-color: #f8f8f8;
+            font-weight: bold;
+        }
+
+        .actions button {
+            padding: 8px 16px;
+            margin: 4px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .edit-btn {
+            background-color: #ff8c00;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .actions button:hover {
+            opacity: 0.8;
+        }
+
+        .edit-btn:hover {
+            background-color: #e77e00;
+        }
+
+        .delete-btn:hover {
+            background-color: #e31c00;
+        }
+
+        .alert {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            text-align: center;
+            display: none;
+        }
+
+        .alert.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .lgpd-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1000;
+            transition: background-color 0.3s;
+        }
+
+        .lgpd-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .lgpd-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .lgpd-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            text-align: left;
+            overflow-y: auto;
+            max-height: 80%;
+            width: 90%;
+        }
+
+        .lgpd-content h3 {
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .close-lgpd {
+            background-color: #f44336;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .close-lgpd:hover {
+            background-color: #d32f2f;
+        }
+
+        .lgpd-info {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-size: 1.1rem;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .formulario button {
+                font-size: 1rem;
+            }
+
+            .alert, .lgpd-btn, .lgpd-info {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Gestão de Trabalhadores</h1>
+        </header>
+
+        <div id="feedback" class="alert"></div>
+
+        <section class="formulario">
+            <h2>Cadastrar ou Editar Trabalhador</h2>
+            <form id="form-trabalhador">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" required>
+
+                <label for="cargo">Cargo:</label>
+                <input type="text" id="cargo" required>
+
+                <label for="dataNascimento">Data de Nascimento:</label>
+                <input type="date" id="dataNascimento" required>
+
+                <label for="salario">Salário:</label>
+                <input type="number" id="salario" step="0.01" required>
+
+                <label for="dataDemissao">Data de Demissão (opcional):</label>
+                <input type="date" id="dataDemissao">
+
+                <label for="cronograma">Cronograma (Data e Hora):</label>
+                <input type="datetime-local" id="cronograma" required>
+
+                <button type="submit">Cadastrar</button>
+            </form>
+        </section>
+
+        <section class="lista-trabalhadores">
+            <h2>Trabalhadores Cadastrados</h2>
+            <table id="tabela-trabalhadores">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Cargo</th>
+                        <th>Data de Nascimento</th>
+                        <th>Salário</th>
+                        <th>Data de Demissão</th>
+                        <th>Cronograma</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-trabalhadores">
+                    <!-- Trabalhadores serão exibidos aqui -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <!-- Botão LGPD -->
+    <button class="lgpd-btn" onclick="abrirModalLGPD()">LGPD</button>
+
+    <!-- Modal LGPD -->
+    <div id="modal-lgpd" class="lgpd-modal">
+        <div class="lgpd-content">
+            <h3>Informações sobre LGPD</h3>
+            <p>Esta plataforma respeita sua privacidade de acordo com a Lei Geral de Proteção de Dados (LGPD). Seus dados são usados exclusivamente para a gestão de trabalhadores.</p>
+            <button class="close-lgpd" onclick="fecharModalLGPD()">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Aviso LGPD -->
+    <div class="lgpd-info">
+        Seus dados estão protegidos conforme a LGPD.
+    </div>
+
+    <script>
+        // Função para abrir o modal LGPD
+        function abrirModalLGPD() {
+            document.getElementById('modal-lgpd').style.display = 'flex';
+        }
+
+        // Função para fechar o modal LGPD
+        function fecharModalLGPD() {
+            document.getElementById('modal-lgpd').style.display = 'none';
+        }
+
+        // Variáveis de DOM
+        const form = document.getElementById('form-trabalhador');
+        const tabela = document.getElementById('tbody-trabalhadores');
+        const feedback = document.getElementById('feedback');
+
+        // Função para obter os trabalhadores do localStorage
+        function carregarTrabalhadores() {
+            const trabalhadores = JSON.parse(localStorage.getItem('trabalhadores')) || [];
+            tabela.innerHTML = '';
+            trabalhadores.forEach((trabalhador, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${trabalhador.nome}</td>
+                    <td>${trabalhador.cargo}</td>
+                    <td>${trabalhador.dataNascimento}</td>
+                    <td>${trabalhador.salario}</td>
+                    <td>${trabalhador.dataDemissao || '-'}</td>
+                    <td>${trabalhador.cronograma}</td>
+                    <td class="actions">
+                        <button class="edit-btn" onclick="editarTrabalhador(${index})">Editar</button>
+                        <button class="delete-btn" onclick="excluirTrabalhador(${index})">Excluir</button>
+                    </td>
+                `;
+                tabela.appendChild(tr);
+            });
+        }
+
+        // Função para cadastrar ou editar trabalhador
+        form.onsubmit = function(event) {
+            event.preventDefault();
+
+            const trabalhador = {
+                nome: document.getElementById('nome').value,
+                cargo: document.getElementById('cargo').value,
+                dataNascimento: document.getElementById('dataNascimento').value,
+                salario: document.getElementById('salario').value,
+                dataDemissao: document.getElementById('dataDemissao').value,
+                cronograma: document.getElementById('cronograma').value
+            };
+
+            const trabalhadores = JSON.parse(localStorage.getItem('trabalhadores')) || [];
+
+            // Se estivermos editando, substituímos o trabalhador
+            if (form.dataset.editarIndex !== undefined) {
+                trabalhadores[form.dataset.editarIndex] = trabalhador;
+                delete form.dataset.editarIndex;
+            } else {
+                trabalhadores.push(trabalhador);
+            }
+
+            localStorage.setItem('trabalhadores', JSON.stringify(trabalhadores));
+            mostrarFeedback('success', 'Trabalhador salvo com sucesso!');
+            carregarTrabalhadores();
+            form.reset();
+        };
+
+        // Função para editar trabalhador
+        function editarTrabalhador(index) {
+            const trabalhadores = JSON.parse(localStorage.getItem('trabalhadores'));
+            const trabalhador = trabalhadores[index];
+
+            document.getElementById('nome').value = trabalhador.nome;
+            document.getElementById('cargo').value = trabalhador.cargo;
+            document.getElementById('dataNascimento').value = trabalhador.dataNascimento;
+            document.getElementById('salario').value = trabalhador.salario;
+            document.getElementById('dataDemissao').value = trabalhador.dataDemissao;
+            document.getElementById('cronograma').value = trabalhador.cronograma;
+
+            form.dataset.editarIndex = index;
+        }
+
+        // Função para excluir trabalhador
+        function excluirTrabalhador(index) {
+            const trabalhadores = JSON.parse(localStorage.getItem('trabalhadores'));
+            trabalhadores.splice(index, 1);
+            localStorage.setItem('trabalhadores', JSON.stringify(trabalhadores));
+            mostrarFeedback('success', 'Trabalhador excluído com sucesso!');
+            carregarTrabalhadores();
+        }
+
+        // Função para mostrar feedback
+        function mostrarFeedback(tipo, mensagem) {
+            feedback.className = `alert ${tipo}`;
+            feedback.textContent = mensagem;
+            feedback.style.display = 'block';
+            setTimeout(() => {
+                feedback.style.display = 'none';
+            }, 3000);
+        }
+
+        // Carregar trabalhadores ao carregar a página
+        carregarTrabalhadores();
+    </script>
+
+</body>
+</html>
